@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PMO Command Center</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <header class="app-header">
+      <div class="branding">
+        <h1>PMO Command Center</h1>
+        <p class="subtitle">
+          A lightweight portfolio dashboard to help project managers and PMO leaders monitor delivery health.
+        </p>
+      </div>
+      <div class="actions">
+        <button id="addProjectBtn" class="primary">+ Add Project</button>
+        <button id="exportBtn" class="ghost">Export Summary</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="summary-grid" aria-label="Portfolio summary metrics">
+        <article class="summary-card">
+          <span class="summary-label">Active Projects</span>
+          <span class="summary-value" id="activeProjects">0</span>
+          <span class="summary-footnote" id="activeProjectsChange"></span>
+        </article>
+        <article class="summary-card">
+          <span class="summary-label">On Track</span>
+          <span class="summary-value" id="onTrackProjects">0</span>
+          <span class="summary-footnote" id="onTrackPercent"></span>
+        </article>
+        <article class="summary-card">
+          <span class="summary-label">At Risk</span>
+          <span class="summary-value" id="atRiskProjects">0</span>
+          <span class="summary-footnote" id="atRiskPercent"></span>
+        </article>
+        <article class="summary-card">
+          <span class="summary-label">Upcoming Milestones</span>
+          <span class="summary-value" id="upcomingMilestones">0</span>
+          <span class="summary-footnote" id="nextMilestone"></span>
+        </article>
+      </section>
+
+      <section class="filters" aria-label="Project filters">
+        <div class="field">
+          <label for="statusFilter">Status</label>
+          <select id="statusFilter">
+            <option value="all">All</option>
+            <option value="Not Started">Not Started</option>
+            <option value="In Progress">In Progress</option>
+            <option value="At Risk">At Risk</option>
+            <option value="Completed">Completed</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="quarterFilter">Quarter</label>
+          <select id="quarterFilter">
+            <option value="all">All</option>
+            <option value="Q1">Q1</option>
+            <option value="Q2">Q2</option>
+            <option value="Q3">Q3</option>
+            <option value="Q4">Q4</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="searchInput">Search</label>
+          <input id="searchInput" type="search" placeholder="Project, manager, or tag" />
+        </div>
+        <div class="field">
+          <label for="sortSelect">Sort by</label>
+          <select id="sortSelect">
+            <option value="priority">Priority</option>
+            <option value="health">Health</option>
+            <option value="progress">Progress</option>
+            <option value="endDate">End date</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="content-grid">
+        <section class="panel" aria-label="Project list">
+          <div class="panel-header">
+            <h2>Portfolio View</h2>
+            <span id="projectCount" class="chip">0 projects</span>
+          </div>
+          <div id="projectList" class="project-list" role="list"></div>
+        </section>
+
+        <section class="panel" aria-label="Risk radar">
+          <div class="panel-header">
+            <h2>Risk &amp; Action Log</h2>
+            <span class="chip" id="riskCount">0 open risks</span>
+          </div>
+          <ul id="riskList" class="risk-list"></ul>
+        </section>
+
+        <section class="panel span-2" aria-label="Timeline">
+          <div class="panel-header">
+            <h2>Milestone Timeline</h2>
+          </div>
+          <div id="timeline" class="timeline"></div>
+        </section>
+      </section>
+    </main>
+
+    <dialog id="projectDialog">
+      <form id="projectForm" method="dialog">
+        <header>
+          <h3>Add Project</h3>
+          <button type="button" class="icon" id="closeDialog" aria-label="Close dialog">&times;</button>
+        </header>
+        <div class="form-grid">
+          <label>
+            Name
+            <input name="name" required />
+          </label>
+          <label>
+            Manager
+            <input name="manager" required />
+          </label>
+          <label>
+            Quarter
+            <select name="quarter" required>
+              <option value="Q1">Q1</option>
+              <option value="Q2">Q2</option>
+              <option value="Q3">Q3</option>
+              <option value="Q4">Q4</option>
+            </select>
+          </label>
+          <label>
+            Priority
+            <select name="priority" required>
+              <option value="1">1 - Critical</option>
+              <option value="2">2 - High</option>
+              <option value="3">3 - Medium</option>
+              <option value="4">4 - Low</option>
+            </select>
+          </label>
+          <label>
+            Status
+            <select name="status" required>
+              <option>Not Started</option>
+              <option>In Progress</option>
+              <option>At Risk</option>
+              <option>Completed</option>
+            </select>
+          </label>
+          <label>
+            Health (RAG)
+            <select name="health" required>
+              <option value="green">Green</option>
+              <option value="amber">Amber</option>
+              <option value="red">Red</option>
+            </select>
+          </label>
+          <label>
+            Progress (%)
+            <input name="progress" type="number" min="0" max="100" value="0" required />
+          </label>
+          <label>
+            Budget Used (%)
+            <input name="budget" type="number" min="0" max="100" value="0" required />
+          </label>
+          <label>
+            Start Date
+            <input name="startDate" type="date" required />
+          </label>
+          <label>
+            End Date
+            <input name="endDate" type="date" required />
+          </label>
+          <label class="span-2">
+            Tags (comma separated)
+            <input name="tags" placeholder="ERP, customer experience" />
+          </label>
+          <label class="span-2">
+            Risks &amp; Actions
+            <textarea name="risks" rows="3" placeholder="Describe the top risks and planned mitigations"></textarea>
+          </label>
+        </div>
+        <footer>
+          <button type="reset" class="ghost">Clear</button>
+          <button type="submit" class="primary">Save Project</button>
+        </footer>
+      </form>
+    </dialog>
+
+    <template id="projectCardTemplate">
+      <article class="project-card" role="listitem">
+        <header>
+          <div>
+            <h3 class="project-name"></h3>
+            <p class="project-meta"></p>
+          </div>
+          <span class="health-indicator" aria-label="Health"></span>
+        </header>
+        <div class="project-body">
+          <dl class="project-stats">
+            <div>
+              <dt>Status</dt>
+              <dd class="project-status"></dd>
+            </div>
+            <div>
+              <dt>Progress</dt>
+              <dd><span class="project-progress"></span>%</dd>
+            </div>
+            <div>
+              <dt>Budget Used</dt>
+              <dd><span class="project-budget"></span>%</dd>
+            </div>
+            <div>
+              <dt>Timeline</dt>
+              <dd class="project-dates"></dd>
+            </div>
+          </dl>
+          <div class="progress-bar" aria-hidden="true">
+            <span class="progress-fill"></span>
+          </div>
+          <div class="tag-list"></div>
+        </div>
+        <footer>
+          <button class="ghost action-view">Details</button>
+          <button class="ghost action-risk">Log Risk</button>
+          <button class="ghost action-complete">Mark Complete</button>
+        </footer>
+      </article>
+    </template>
+
+    <template id="riskItemTemplate">
+      <li>
+        <div class="risk-title"></div>
+        <p class="risk-detail"></p>
+        <span class="risk-meta"></span>
+      </li>
+    </template>
+
+    <script src="app.js" type="module"></script>
+  </body>
+</html>
